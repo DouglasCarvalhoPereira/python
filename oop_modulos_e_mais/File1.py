@@ -8,6 +8,7 @@ class TV:
         self.canal = 'netflix'
         self.volume = 10
 
+
 #Objeto 1
 tv_sala = TV()
 
