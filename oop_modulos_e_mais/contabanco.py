@@ -1,5 +1,7 @@
 #SISTEMA CONTA CORRENTE
 from datetime import datetime, timezone
+import pytz
+from random import randint
 
 class ContaCorrente():
     """
@@ -20,18 +22,18 @@ class ContaCorrente():
         """
         Pega data e hora atual no formato adequado.
         """
-        hora = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-        return hora
+        data_hora = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        return data_hora
 
     def __init__(self, nome, cpf, agencia, num_conta) -> None:
-        self._nome = nome
-        self._cpf = cpf
+        self.nome = nome
+        self.cpf = cpf
         self._limite = None
         self._saldo = 0
-        self._agencia = agencia
-        self._num_conta = num_conta
+        self.agencia = agencia
+        self.num_conta = num_conta
         self._transacoes = []
-        self._cartoes = []
+        self.cartoes = []
 
     def consultar_saldo(self):
         return f"_saldo: R$ {self._saldo}"
@@ -69,10 +71,32 @@ class ContaCorrente():
 
 class CartaoCredito:
 
+    @staticmethod
+    def _data_hora():
+        """
+        Pega data e hora atual no formato adequado.
+        """
+        data_hora = datetime.now().strftime('%d-%m-%Y %H:%M:%S')
+        return data_hora
+
     def __init__(self, titular, conta_corrente) -> None:
-        self.numero = 1234
+        self.numero = randint(1000000000000000, 9999999999999999)
         self.titular = titular
-        self.validade = None
-        self.cod_seguranca = None
+        self.validade = '{}/{}'.format(CartaoCredito._data_hora()[3:5], int(CartaoCredito._data_hora()[6:10]) + 4)
+        self.cod_seguranca = '{}{}{}'.format(randint(0, 9), randint(0, 9), randint(0, 9))
+        self._senha = '1234'
         self.conta_corrente = conta_corrente
-        conta_corrente._cartoes.append(self)
+        conta_corrente.cartoes.append(self)
+    
+    
+    @property
+    def senha(self):
+        return self._senha
+
+    @senha.setter
+    def senha(self, valor):
+        if len(valor) == 4 and valor.isnumeric():
+            self._senha = valor
+            print("Senha alterada com sucesso.")
+        else:
+            print("Nova senha inválida.")
